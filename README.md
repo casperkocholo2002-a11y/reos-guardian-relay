@@ -5,7 +5,7 @@ Minimal HTTPS relay for connecting the REOS Production node agent to an external
 ## Required environment
 
 - `RELAY_BRIDGE_TOKEN`: random secret of at least 32 characters.
-- `PORT`: supplied by the PaaS, defaults to `3000`.
+- `PORT`: supplied by the PaaS when available; fallback is `8080` for OpenShift-compatible routing.
 
 ## Health
 
