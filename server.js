@@ -1,7 +1,7 @@
 const http = require('http');
 const { randomUUID, timingSafeEqual } = require('crypto');
 
-const PORT = Number(process.env.PORT || 8080);
+const PORT = Number(process.env.PORT || 3000);
 const TOKEN = process.env.RELAY_BRIDGE_TOKEN || '';
 if (!Number.isSafeInteger(PORT) || PORT < 1 || PORT > 65535) throw new Error('PORT_INVALID');
 if (TOKEN.length < 32) throw new Error('RELAY_BRIDGE_TOKEN_REQUIRED');
