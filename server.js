@@ -1,9 +1,10 @@
 import http from "node:http";
 import { randomUUID, timingSafeEqual } from "node:crypto";
 
-const PORT = Number(process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080);
+const PRIMARY_PORT = Number(process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000);
+const PORTS = [...new Set([PRIMARY_PORT, 3000, 8080])];
 const TOKEN = process.env.RELAY_BRIDGE_TOKEN || "";
-if (!Number.isSafeInteger(PORT) || PORT < 1 || PORT > 65535) throw new Error("PORT_INVALID");
+if (!PORTS.every((p) => Number.isSafeInteger(p) && p >= 1024 && p <= 65535)) throw new Error("PORT_INVALID");
 if (TOKEN.length < 32) throw new Error("RELAY_BRIDGE_TOKEN_REQUIRED");
 
 const MAX = 16 * 1024;
@@ -102,6 +103,9 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`reos-guardian-relay listening on ${PORT}`);
-});
+for (const port of PORTS) {
+  const instance = port === PRIMARY_PORT ? server : http.createServer(server.listeners("request")[0]);
+  instance.listen(port, "0.0.0.0", () => {
+    console.log(`reos-guardian-relay listening on ${port}`);
+  });
+}
